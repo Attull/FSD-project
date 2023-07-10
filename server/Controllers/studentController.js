@@ -1,11 +1,13 @@
 import userModel from "../models/userModel.js";
-
+import bcrypt from "bcryptjs"
 
 export const getStudentController = async (req,res) =>{
     let students;
   try{
-    students =  await userModel.find()
+    students =  await userModel.find({})
+    
   }catch(e){
+    console.log("mongoose error", e)
   }
 
   if(!students){
@@ -20,7 +22,7 @@ export const getStudentController = async (req,res) =>{
 export const postStudentController = async (req,res) =>{
     console.log(req.body)
     const {name, email, password, batch}  = req.body
-    l
+    
     let existingStudent;
 
     try{
@@ -35,10 +37,12 @@ export const postStudentController = async (req,res) =>{
         })
     }
 
+    const hashedPassword = bcrypt.hashSync(password);
+
     const newStudent = new userModel({
         name:name,
         email:email,
-        password: password,
+        password: hashedPassword,
         batch:batch
     })
 
@@ -49,5 +53,31 @@ export const postStudentController = async (req,res) =>{
     }
     res.status(200).json({
         message:"new student created"
+    })
+}
+
+export const deleteStudentController = async (req, res) =>{
+    const email =  req.params.email
+    let studentEmail
+    try{
+        studentEmail = await userModel.findOne({email})
+    }catch(e){
+
+    }
+
+    if(!studentEmail){
+        res.status(400).json({
+            message:"No used found"
+        })
+    }
+
+    try{
+        await userModel.deleteOne({email})
+    }catch(e){
+
+    }
+
+    res.status(200).json({
+        message:"student deleted"
     })
 }
