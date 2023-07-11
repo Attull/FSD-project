@@ -81,3 +81,32 @@ export const deleteStudentController = async (req, res) =>{
         message:"student deleted"
     })
 }
+
+export const updateStudentController = async (req, res) =>{
+    const id =  req.params.id
+    const {name,password, email, batch} = req.body
+
+    let student
+    try{
+        console.log("first")
+        student = await userModel.findByIdAndUpdate(id,{
+            name,
+            email,
+            password,
+            batch
+        })
+        console.log("last")
+    }catch(e){
+
+    }
+
+    if(!student){
+        res.status(400).json({
+            message:"No used found"
+        })
+    }
+
+    res.status(200).json({student})
+    
+
+}
