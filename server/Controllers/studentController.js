@@ -57,24 +57,19 @@ export const postStudentController = async (req,res) =>{
 }
 
 export const deleteStudentController = async (req, res) =>{
-    const email =  req.params.email
-    let studentEmail
+    const id =  req.params.id
+    let studentId
     try{
-        studentEmail = await userModel.findOne({email})
+        userModel.findByIdAndRemove(id)
+            .then(data => {
+                if(!data){
+                    res.status(400).json({
+                        message:`No data is there on the ID ${id}`
+                    })
+                }
+            })
     }catch(e){
-
-    }
-
-    if(!studentEmail){
-        res.status(400).json({
-            message:"No used found"
-        })
-    }
-
-    try{
-        await userModel.deleteOne({email})
-    }catch(e){
-
+        console.log("inside")
     }
 
     res.status(200).json({
